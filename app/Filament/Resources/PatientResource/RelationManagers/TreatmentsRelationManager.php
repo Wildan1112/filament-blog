@@ -37,16 +37,16 @@ class TreatmentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('description')
             ->columns([
-                Tables\Columns\TextColumn::make('description'),
+                Tables\Columns\TextColumn::make('description')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('price')
                     ->money('EUR')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime('d-M-Y H:i'),
+                    ->dateTime('d-M-Y H:i')->sortable(),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])

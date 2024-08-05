@@ -2,11 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\OwnerResource\Pages;
-use App\Filament\Resources\OwnerResource\RelationManagers;
-use App\Models\Owner;
+use App\Filament\Resources\TreatmentResource\Pages;
+use App\Filament\Resources\TreatmentResource\RelationManagers;
+use App\Models\Treatment;
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -15,11 +14,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class OwnerResource extends Resource
+class TreatmentResource extends Resource
 {
-    protected static ?string $model = Owner::class;
+    protected static ?string $model = Treatment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?string $navigationIcon = 'heroicon-o-shield-exclamation';
 
     protected static ?string $navigationGroup = 'Management';
 
@@ -27,18 +26,15 @@ class OwnerResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                Forms\Components\TextInput::make('description')
                     ->required()
                     ->maxLength(255),
-                TextInput::make('email')
-                    ->email()->label('Email Address')
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('phone')
-                    ->label('Phone Number')
-                    ->required()
-                    ->tel()
-                    ->maxLength(255),
+                Forms\Components\Textarea::make('notes')
+                    ->maxLength(65535),
+                Forms\Components\TextInput::make('price')
+                    ->numeric()
+                    ->prefix('€')
+                    ->maxValue(42949672.95),
             ]);
     }
 
@@ -46,15 +42,18 @@ class OwnerResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
+                TextColumn::make('description')
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('email')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('phone')->label('Phone Number')
+                TextColumn::make('price')
+                    ->money('EUR')
+                    ->sortable(),
+                TextColumn::make('created_at')
+                    ->dateTime('d-M-Y H:i')->sortable(),
             ])
-            ->filters([])
+            ->filters([
+                //
+            ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
@@ -70,16 +69,17 @@ class OwnerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\PatientsRelationManager::class
+            //
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOwners::route('/'),
-            'create' => Pages\CreateOwner::route('/create'),
-            'edit' => Pages\EditOwner::route('/{record}/edit'),
+            'index' => Pages\ListTreatments::route('/'),
+            'create' => Pages\CreateTreatment::route('/create'),
+            'view' => Pages\ViewTreatment::route('/{record}'),
+            'edit' => Pages\EditTreatment::route('/{record}/edit'),
         ];
     }
 }
